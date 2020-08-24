@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SKETCH - trimetric</title>
+<style>
+#canvas {
+	display: block;
+	max-width: 600px;
+	width: 100%;
+	margin: 10px auto;
+}
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+</body>
+<script>
+const canvasApp = () => {
+
+    const W = 4000; //キャンバスの幅
+    const H = 4000; //キャンバスの高さ
+    const w = 800; //画像の幅
+    const h = 800; //画像の高さ
+    const p = 500; //画像の間隔
+    const n = 8; //繰り返し回数
+    const A = 36 / 180 * Math.PI; //右側の角度
+    const B = 18 / 180 * Math.PI; //左側の角度
+    const bg = '#dbefed'; //背景色
+
+    const trimetric = (x, y) => {
+        const xx = (x - y * Math.cos(A + B)) * Math.cos(B) - y * Math.sin(A + B) * Math.sin(B);
+        const yy = (x - y * Math.cos(A + B)) * Math.sin(B) + y * Math.sin(A + B) * Math.cos(B);
+        return {xx, yy};
+    }
+    
+	const cvs = document.querySelector('#canvas');
+    const ctx = cvs.getContext('2d');
+    cvs.width = W;
+    cvs.height = H;
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+    ctx.translate(W * 0.5, 0);
+
+    for (let y = 0; y < n; y++) {
+        for (let x = 0; x < n; x++) {
+            const {xx, yy} = trimetric(x, y);
+            ctx.drawImage(parts[y % 2], xx * p - w * 0.5, yy * p - h * 0.5, w, h);
+        }
+    };
+}
+
+const init = () => {
+    l++;
+    if (l === n) {
+        canvasApp();
+    }
+}
+
+const n = 2;
+const parts = [];
+let l = 0;
+for (let i = 0; i < n; i++) {
+    const part = new Image();
+    part.onload = init;
+    part.src = 'img/' + i + '.png';
+    parts.push(part);
+}
+
+</script>
+</html>
